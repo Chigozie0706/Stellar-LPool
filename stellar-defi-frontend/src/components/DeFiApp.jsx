@@ -14,7 +14,7 @@ import {
 
 const server = new SorobanRpc.Server("https://soroban-testnet.stellar.org");
 
-const StellarOperations = () => {
+const DefiApp = () => {
   const [secretKey, setSecretKey] = useState("");
   const [amount, setAmount] = useState("");
   const [swapAmount, setSwapAmount] = useState("");
@@ -339,4 +339,4 @@ const StellarOperations = () => {
   );
 };
 
-export default StellarOperations;
+export default DefiApp;

@@ -1,32 +1,33 @@
 "# Stellar-LPool"
 
-# Stellar Operations React App
+## Overview
 
-This project is a React-based frontend that allows users to interact with the Stellar blockchain. The app provides functionalities to:
-
-- Fund an account using the Stellar Friendbot service.
-- Create a liquidity pool.
-- Perform a token swap.
-- Withdraw from a liquidity pool.
+Stellar-LPool is a liquidity pool dApp built on the Steller blockchain. It interacts with the Stellar blockchain testnet to perform various operations, including generating keypairs, funding accounts, creating and interacting with liquidity pools, and performing asset swaps. It utilizes the Stellar SDK to handle blockchain transactions and updates the user interface with transaction status and links.
 
 These operations are performed on the Stellar testnet using the `@stellar/stellar-sdk` library.
 
 ## Features
 
-- **Generate Keypair**: Create a new keypair (public/private key pair) for Stellar operations.
-- **Fund Account**: Fund a Stellar account using Friendbot, a service that provides testnet Lumens (XLM).
-- **Create Liquidity Pool**: Create a liquidity pool on the Stellar testnet with a custom asset.
-- **Perform Swap**: Swap assets using the liquidity pool.
-- **Withdraw from Liquidity Pool**: Withdraw assets from a liquidity pool.
+- **Generate Keypair**: Generate a new Stellar keypair and display the public and secret keys.
+- **Fund Account**: Fund a Stellar account using the Friendbot service.
+- **Establish a New Liquidity Pool with a Custom Asset Pair**: Create a liquidity pool with custom and XLM assets.
+- **Deposit Assets into the Liquidity Pool**: Deposit specified amounts of XLM and custom assets into the created liquidity pool.
+- **Perform a Path Payment Using the Liquidity Pool**: Execute a path payment swap from XLM to a custom asset through the liquidity pool.
+- **Withdraw from the Liquidity Pool and Analyze the Results**: Withdraw assets from the liquidity pool and review the results of the transaction.
+- **Display Transaction Status**: Show the status of each transaction and provide links to the transactions on Stellar Expert.
+- **Change Trust**: Add or update trust lines for assets involved in liquidity pools or swaps.
+- **Manage Custom Assets**: Define and manage custom assets for use in liquidity pools or path payments.
+- **Handle Errors and Notifications**: Provide feedback and error messages if transactions fail or require attention.
+- **Clear Form Data**: Reset form fields and state variables after successful transactions to prepare for new operations.
 
 ## Getting Started
 
 ## Prerequisites
 
-- Make sure you have Node.js and npm installed on your machine.
+- Make sure you have Node.js and npm installed on your machine:
 
-- Node.js (>= 14.x)
-- NPM (>= 6.x) or Yarn (>= 1.x)
+- Node.js (version 12 or higher): A JavaScript runtime that allows you to run JavaScript on your computer.
+- npm (Node Package Manager): A tool that comes with Node.js to help you install and manage JavaScript packages.
 
 ## Setup Instructions
 
@@ -56,7 +57,7 @@ npm run dev
 
 The application will be available at `http://localhost:5173/`
 
-# Usage
+## Usage
 
 1. Generating a New Keypair
    Click the "Generate New Keypair" button to generate a new Stellar keypair. The public and secret keys will be logged in the status area.
@@ -76,10 +77,38 @@ The application will be available at `http://localhost:5173/`
 6. Viewing Transaction Links
    After each operation, a transaction link will be generated and displayed in the "Transaction Links" section. You can click the link to view the transaction details on the Stellar Explorer.
 
-# Dependencies
+## Dependencies
 
 - @mui/material: For UI components.
 - @stellar/stellar-sdk: For interacting with the Stellar network.
+- node-fetch
+
+## Implementation
+
+- This application uses the Stellar SDK to interact with the Stellar blockchain. It performs key operations such as generating keypairs, funding accounts, creating and managing liquidity pools, and executing swaps. Transactions are built and sent using the Stellar SDK's TransactionBuilder, and status updates are displayed to users.
+
+- **Keypair Generation**: Uses Keypair.random() to generate new Stellar keypairs.
+- **Account Funding**: Utilizes the Friendbot service to fund accounts on the testnet.
+- **Liquidity Pool Management**: Creates and manages liquidity pools with custom assets and XLM.
+- **Path Payments**: Executes swaps between XLM and custom assets.
+- **Transaction Status**: Displays status updates and transaction links for user verification.
+
+## Proof of Transaction Actions
+
+You can view and verify the transactions performed by this dApp using the following links:
+
+- Transaction 1: View Transaction
+- Transaction 2: View Transaction
+
+## Links
+
+-- GitHub Repository: https://github.com/your-username/stellar-operations
+-- Tweet/Post: [Link to tweet/post about the project]
+
+## Acknowledgments
+
+Stellar SDK Documentation
+Material-UI
 
 ### How to Use the `README.md`:
 
