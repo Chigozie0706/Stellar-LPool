@@ -23,33 +23,48 @@ const StellarOperations = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [defiKeypair, setDefiKeypair] = useState(Keypair.random());
   const [transactionLinks, setTransactionLinks] = useState([]);
+  const [assetName, setAssetName] = useState("");
+  const [liquidityPoolId, setLiquidityPoolId] = useState("");
+  const [xlmAmount, setXlmAmount] = useState("");
+  const [customAssetAmount, setCustomAssetAmount] = useState("");
+  const [generateKeypairProcessing, setGenerateKeypairProcessing] =
+    useState(false);
+  const [fundAccountProcessing, setFundAccountProcessing] = useState(false);
+  const [createLiquidityPoolProcessing, setCreateLiquidityPoolProcessing] =
+    useState(false);
+  const [performSwapProcessing, setPerformSwapProcessing] = useState(false);
+  const [withdrawProcessing, setWithdrawProcessing] = useState(false);
 
-  // const logMessage = (message) => {
-  //   setStatus((prevStatus) => `${prevStatus}\n${message}`);
-  // };
-
-  const logMessage = (message, hash) => {
+  const logMessage = (message, result) => {
     setStatus((prevStatus) => `${prevStatus}\n${message}`);
-    if (hash) {
+    if (result) {
       setTransactionLinks((prevLinks) => [
         ...prevLinks,
-        `https://stellar.expert/explorer/testnet/tx/${hash}`,
+        `https://stellar.expert/explorer/testnet/tx/${result.hash}`,
       ]);
     }
   };
 
   const generateKeypair = () => {
-    const newKeypair = Keypair.random();
-    setDefiKeypair(newKeypair);
-    setSecretKey(newKeypair.secret());
-    logMessage(`New keypair generated. Public Key: ${newKeypair.publicKey()}`);
+    setGenerateKeypairProcessing(true);
+    try {
+      const newKeypair = Keypair.random();
+      setDefiKeypair(newKeypair);
+      setSecretKey(newKeypair.secret());
+      logMessage(
+        `New keypair generated. Public Key: ${newKeypair.publicKey()}`
+      );
+    } finally {
+      setGenerateKeypairProcessing(false);
+    }
   };
 
   const fundAccountWithFriendbot = async () => {
     const address = defiKeypair.publicKey();
     const friendbotUrl = `https://friendbot.stellar.org?addr=${address}`;
+
     try {
-      setIsProcessing(true);
+      setFundAccountProcessing(true);
       let response = await fetch(friendbotUrl);
       if (response.ok) {
         logMessage(`Account ${address} successfully funded.`);
@@ -59,22 +74,24 @@ const StellarOperations = () => {
     } catch (error) {
       logMessage(`Error funding account ${address}: ${error}`);
     } finally {
-      setIsProcessing(false);
+      setFundAccountProcessing(false);
     }
   };
 
   const createLiquidityPool = async () => {
     try {
-      setIsProcessing(true);
+      setCreateLiquidityPoolProcessing(true);
       const defiAccount = await server.getAccount(defiKeypair.publicKey());
-      const ekoLanceAsset = new Asset("EkoLance", defiKeypair.publicKey());
-      const lpAsset = new LiquidityPoolAsset(Asset.native(), ekoLanceAsset, 30);
+      const customAsset = new Asset("LPool", defiKeypair.publicKey());
+      const lpAsset = new LiquidityPoolAsset(Asset.native(), customAsset, 30);
       const liquidityPoolId = getLiquidityPoolId(
         "constant_product",
         lpAsset
       ).toString("hex");
 
-      logMessage(`Custom Asset: ${ekoLanceAsset}`);
+      setLiquidityPoolId(liquidityPoolId);
+
+      logMessage(`Custom Asset: ${customAsset}`);
       logMessage(`Liquidity Pool Asset: ${lpAsset}`);
       logMessage(`Liquidity Pool ID: ${liquidityPoolId}`);
 
@@ -86,8 +103,8 @@ const StellarOperations = () => {
         .addOperation(
           Operation.liquidityPoolDeposit({
             liquidityPoolId: liquidityPoolId,
-            maxAmountA: "100",
-            maxAmountB: "100",
+            maxAmountA: xlmAmount,
+            maxAmountB: customAssetAmount,
             minPrice: { n: 1, d: 1 },
             maxPrice: { n: 1, d: 1 },
           })
@@ -98,21 +115,26 @@ const StellarOperations = () => {
       lpDepositTransaction.sign(defiKeypair);
       const result = await server.sendTransaction(lpDepositTransaction);
       logMessage(
-        `Liquidity Pool Created. Transaction URL: https://stellar.expert/explorer/testnet/tx/${result.hash}`
+        `Liquidity Pool Created. Transaction URL: https://stellar.expert/explorer/testnet/tx/${result.hash}`,
+        result
       );
+
+      setAssetName("");
+      setXlmAmount("");
+      setCustomAssetAmount("");
     } catch (error) {
       logMessage(`Error creating liquidity pool: ${error.message}`);
     } finally {
-      setIsProcessing(false);
+      setCreateLiquidityPoolProcessing(false);
     }
   };
 
   const performSwap = async () => {
     try {
-      setIsProcessing(true);
+      setPerformSwapProcessing(true);
       const traderKeypair = Keypair.fromSecret(secretKey);
       const traderAccount = await server.getAccount(traderKeypair.publicKey());
-      const ekoLanceAsset = new Asset("EkoLance", traderKeypair.publicKey());
+      const customAsset = new Asset("LPool", traderKeypair.publicKey());
 
       const pathPaymentTransaction = new TransactionBuilder(traderAccount, {
         fee: BASE_FEE,
@@ -120,7 +142,7 @@ const StellarOperations = () => {
       })
         .addOperation(
           Operation.changeTrust({
-            asset: ekoLanceAsset,
+            asset: customAsset,
             source: traderKeypair.publicKey(),
           })
         )
@@ -129,7 +151,7 @@ const StellarOperations = () => {
             sendAsset: Asset.native(),
             sendMax: "1000",
             destination: traderKeypair.publicKey(),
-            destAsset: ekoLanceAsset,
+            destAsset: customAsset,
             destAmount: swapAmount,
             source: traderKeypair.publicKey(),
           })
@@ -140,21 +162,24 @@ const StellarOperations = () => {
       pathPaymentTransaction.sign(traderKeypair);
       const result = await server.sendTransaction(pathPaymentTransaction);
       logMessage(
-        `Swap Performed. Transaction URL: https://stellar.expert/explorer/testnet/tx/${result.hash}`
+        `Swap Performed. Transaction URL: https://stellar.expert/explorer/testnet/tx/${result.hash}`,
+        result
       );
+
+      setSwapAmount("");
     } catch (error) {
       logMessage(`Error performing swap: ${error.message}`);
     } finally {
-      setIsProcessing(false);
+      setPerformSwapProcessing(false);
     }
   };
 
   const withdrawFromLiquidityPool = async () => {
     try {
-      setIsProcessing(true);
+      setWithdrawProcessing(true);
       const defiAccount = await server.getAccount(defiKeypair.publicKey());
-      const ekoLanceAsset = new Asset("EkoLance", defiKeypair.publicKey());
-      const lpAsset = new LiquidityPoolAsset(Asset.native(), ekoLanceAsset, 30);
+      const customAsset = new Asset("LPool", defiKeypair.publicKey());
+      const lpAsset = new LiquidityPoolAsset(Asset.native(), customAsset, 30);
       const liquidityPoolId = getLiquidityPoolId(
         "constant_product",
         lpAsset
@@ -178,43 +203,81 @@ const StellarOperations = () => {
       lpWithdrawTransaction.sign(defiKeypair);
       const result = await server.sendTransaction(lpWithdrawTransaction);
       logMessage(
-        `Withdrawal Successful. Transaction URL: https://stellar.expert/explorer/testnet/tx/${result.hash}`
+        `Withdrawal Successful. Transaction URL: https://stellar.expert/explorer/testnet/tx/${result.hash}`,
+        result
       );
+      setWithdrawAmount("");
     } catch (error) {
       logMessage(`Error withdrawing from liquidity pool: ${error.message}`);
     } finally {
-      setIsProcessing(false);
+      setWithdrawProcessing(false);
     }
   };
 
   return (
-    <div className="flex ">
+    <div className="flex">
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <Button
               variant="contained"
               onClick={generateKeypair}
+              disabled={generateKeypairProcessing}
               sx={{ mb: 2 }}
             >
-              Generate New Keypair
+              {generateKeypairProcessing
+                ? "Generating Keypair..."
+                : "Generate New Keypair"}
             </Button>
-
             <Button
               variant="contained"
               onClick={fundAccountWithFriendbot}
-              disabled={isProcessing}
+              disabled={fundAccountProcessing}
             >
-              {isProcessing ? "Processing..." : "Fund Account"}
+              {fundAccountProcessing ? "Funding Account..." : "Fund Account"}
             </Button>
+
+            <TextField
+              label="Custom Asset Name"
+              value={assetName}
+              onChange={(e) => setAssetName(e.target.value)}
+              fullWidth
+            />
+
+            <TextField
+              label="XLM Deposit Amount"
+              type="number"
+              value={xlmAmount}
+              onChange={(e) => setXlmAmount(e.target.value)}
+              required
+            />
+            <TextField
+              label="Custom Asset Deposit Amount"
+              type="number"
+              value={customAssetAmount}
+              onChange={(e) => setCustomAssetAmount(e.target.value)}
+              required
+            />
 
             <Button
               variant="contained"
               onClick={createLiquidityPool}
-              disabled={isProcessing}
+              disabled={createLiquidityPoolProcessing}
             >
-              {isProcessing ? "Processing..." : "Create Liquidity Pool"}
+              {createLiquidityPoolProcessing
+                ? "Creating Liquidity Pool..."
+                : "Create Liquidity Pool"}
             </Button>
+
+            <TextField
+              label="Liquidity Pool ID"
+              value={liquidityPoolId}
+              InputProps={{
+                readOnly: true,
+              }}
+              fullWidth
+              margin="normal"
+            />
 
             <TextField
               label="Amount to Swap"
@@ -223,15 +286,13 @@ const StellarOperations = () => {
               onChange={(e) => setSwapAmount(e.target.value)}
               required
             />
-
             <Button
               variant="contained"
               onClick={performSwap}
-              disabled={isProcessing}
+              disabled={performSwapProcessing}
             >
-              {isProcessing ? "Processing..." : "Perform Swap"}
+              {performSwapProcessing ? "Performing Swap..." : "Perform Swap"}
             </Button>
-
             <TextField
               label="Amount to Withdraw"
               type="number"
@@ -243,9 +304,12 @@ const StellarOperations = () => {
             <Button
               variant="contained"
               onClick={withdrawFromLiquidityPool}
-              disabled={isProcessing}
+              disabled={withdrawProcessing}
+              style={{ marginBottom: "12px" }}
             >
-              {isProcessing ? "Processing..." : "Withdraw from Liquidity Pool"}
+              {withdrawProcessing
+                ? "Withdrawing..."
+                : "Withdraw from Liquidity Pool"}
             </Button>
           </Box>
         </Grid>
@@ -253,10 +317,13 @@ const StellarOperations = () => {
         <Grid item xs={12} md={6}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <Typography variant="h6" gutterBottom>
+              Latest Log
+            </Typography>
+            {status && <pre>{status}</pre>}
+
+            <Typography variant="h6" gutterBottom>
               Transaction Links
             </Typography>
-
-            {status && <pre>{status}</pre>}
 
             {transactionLinks.map((link, index) => (
               <Typography key={index}>

@@ -21,10 +21,6 @@ These operations are performed on the Stellar testnet using the `@stellar/stella
 
 ## Getting Started
 
-### Prerequisites
-
-### Installation
-
 ## Prerequisites
 
 - Make sure you have Node.js and npm installed on your machine.

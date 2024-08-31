@@ -6,7 +6,12 @@ function App() {
   return (
     <Container>
       <Box>
-        <Typography variant="h4" component="h1" gutterBottom>
+        <Typography
+          variant="h5"
+          component="h1"
+          gutterBottom
+          style={{ padding: "10px" }}
+        >
           Stellar Liquidity Pool
         </Typography>
         <DeFiApp />
