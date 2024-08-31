@@ -6,6 +6,18 @@ Stellar-LPool is a liquidity pool dApp built on the Steller blockchain. It inter
 
 These operations are performed on the Stellar testnet using the `@stellar/stellar-sdk` library.
 
+## Proof of Transaction Actions
+
+You can view and verify the transactions performed by this dApp using the following links:
+
+- Transaction 1: [View Transaction](https://stellar.expert/explorer/testnet/tx/7352d1e2c32e27153a1453281d8db3e52ed5b144cec5c0e4c1c50f71d7db3762)
+- Transaction 2: [View Transaction](https://stellar.expert/explorer/testnet/tx/61e3c220768fe259adb606cdfd78dfdcf437776018318f20ab05099e1a34aa5c)
+
+## Links
+
+- GitHub Repository: [https://github.com/Chigozie0706/Stellar-LPool](https://github.com/Chigozie0706/Stellar-LPool)
+- Tweet/Post: [https://x.com/chigoziejacob1/status/1829900169070199035](https://x.com/chigoziejacob1/status/1829900169070199035)
+
 ## Features
 
 - **Generate Keypair**: Generate a new Stellar keypair and display the public and secret keys.
@@ -92,23 +104,6 @@ The application will be available at `http://localhost:5173/`
 - **Liquidity Pool Management**: Creates and manages liquidity pools with custom assets and XLM.
 - **Path Payments**: Executes swaps between XLM and custom assets.
 - **Transaction Status**: Displays status updates and transaction links for user verification.
-
-## Proof of Transaction Actions
-
-You can view and verify the transactions performed by this dApp using the following links:
-
-- Transaction 1: View Transaction
-- Transaction 2: View Transaction
-
-## Links
-
--- GitHub Repository: https://github.com/your-username/stellar-operations
--- Tweet/Post: [Link to tweet/post about the project]
-
-## Acknowledgments
-
-Stellar SDK Documentation
-Material-UI
 
 ### How to Use the `README.md`:
 

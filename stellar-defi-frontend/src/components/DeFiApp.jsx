@@ -12,9 +12,11 @@ import {
   Networks,
 } from "@stellar/stellar-sdk";
 
+// Initialize the Stellar testnet server
 const server = new SorobanRpc.Server("https://soroban-testnet.stellar.org");
 
 const DefiApp = () => {
+  // State variables for handling form inputs, processing states, and transaction results
   const [secretKey, setSecretKey] = useState("");
   const [amount, setAmount] = useState("");
   const [swapAmount, setSwapAmount] = useState("");
@@ -35,6 +37,7 @@ const DefiApp = () => {
   const [performSwapProcessing, setPerformSwapProcessing] = useState(false);
   const [withdrawProcessing, setWithdrawProcessing] = useState(false);
 
+  // Logs messages and transaction results, updating status and links
   const logMessage = (message, result) => {
     setStatus((prevStatus) => `${prevStatus}\n${message}`);
     if (result) {
@@ -45,6 +48,7 @@ const DefiApp = () => {
     }
   };
 
+  // Generates a new Stellar keypair and updates state
   const generateKeypair = () => {
     setGenerateKeypairProcessing(true);
     try {
@@ -59,6 +63,7 @@ const DefiApp = () => {
     }
   };
 
+  // Funds a Stellar account using the Friendbot service
   const fundAccountWithFriendbot = async () => {
     const address = defiKeypair.publicKey();
     const friendbotUrl = `https://friendbot.stellar.org?addr=${address}`;
@@ -78,6 +83,7 @@ const DefiApp = () => {
     }
   };
 
+  // Creates a new liquidity pool with custom and XLM assets
   const createLiquidityPool = async () => {
     try {
       setCreateLiquidityPoolProcessing(true);
@@ -95,6 +101,7 @@ const DefiApp = () => {
       logMessage(`Liquidity Pool Asset: ${lpAsset}`);
       logMessage(`Liquidity Pool ID: ${liquidityPoolId}`);
 
+      // Create a transaction to deposit assets into the liquidity pool
       const lpDepositTransaction = new TransactionBuilder(defiAccount, {
         fee: BASE_FEE,
         networkPassphrase: Networks.TESTNET,
@@ -129,6 +136,7 @@ const DefiApp = () => {
     }
   };
 
+  // Performs a path payment swap from XLM to a custom asset
   const performSwap = async () => {
     try {
       setPerformSwapProcessing(true);
@@ -174,6 +182,7 @@ const DefiApp = () => {
     }
   };
 
+  // Withdraws assets from the liquidity pool
   const withdrawFromLiquidityPool = async () => {
     try {
       setWithdrawProcessing(true);
@@ -200,6 +209,7 @@ const DefiApp = () => {
         .setTimeout(30)
         .build();
 
+      // Create a transaction to withdraw assets from the liquidity pool
       lpWithdrawTransaction.sign(defiKeypair);
       const result = await server.sendTransaction(lpWithdrawTransaction);
       logMessage(
@@ -214,6 +224,7 @@ const DefiApp = () => {
     }
   };
 
+  // Render the component with form fields and transaction status
   return (
     <div className="flex">
       <Grid container spacing={2}>
