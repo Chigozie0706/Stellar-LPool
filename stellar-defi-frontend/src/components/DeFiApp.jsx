@@ -88,7 +88,7 @@ const DefiApp = () => {
     try {
       setCreateLiquidityPoolProcessing(true);
       const defiAccount = await server.getAccount(defiKeypair.publicKey());
-      const customAsset = new Asset("LPool", defiKeypair.publicKey());
+      const customAsset = new Asset(assetName, defiKeypair.publicKey());
       const lpAsset = new LiquidityPoolAsset(Asset.native(), customAsset, 30);
       const liquidityPoolId = getLiquidityPoolId(
         "constant_product",
@@ -126,7 +126,6 @@ const DefiApp = () => {
         result
       );
 
-      setAssetName("");
       setXlmAmount("");
       setCustomAssetAmount("");
     } catch (error) {
@@ -142,7 +141,7 @@ const DefiApp = () => {
       setPerformSwapProcessing(true);
       const traderKeypair = Keypair.fromSecret(secretKey);
       const traderAccount = await server.getAccount(traderKeypair.publicKey());
-      const customAsset = new Asset("LPool", traderKeypair.publicKey());
+      const customAsset = new Asset(assetName, traderKeypair.publicKey());
 
       const pathPaymentTransaction = new TransactionBuilder(traderAccount, {
         fee: BASE_FEE,
@@ -187,7 +186,7 @@ const DefiApp = () => {
     try {
       setWithdrawProcessing(true);
       const defiAccount = await server.getAccount(defiKeypair.publicKey());
-      const customAsset = new Asset("LPool", defiKeypair.publicKey());
+      const customAsset = new Asset(assetName, defiKeypair.publicKey());
       const lpAsset = new LiquidityPoolAsset(Asset.native(), customAsset, 30);
       const liquidityPoolId = getLiquidityPoolId(
         "constant_product",

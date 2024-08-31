@@ -10,8 +10,8 @@ These operations are performed on the Stellar testnet using the `@stellar/stella
 
 You can view and verify the transactions performed by this dApp using the following links:
 
-- Transaction 1: [View Transaction](https://stellar.expert/explorer/testnet/tx/7352d1e2c32e27153a1453281d8db3e52ed5b144cec5c0e4c1c50f71d7db3762)
-- Transaction 2: [View Transaction](https://stellar.expert/explorer/testnet/tx/61e3c220768fe259adb606cdfd78dfdcf437776018318f20ab05099e1a34aa5c)
+- Transaction 1: [View Transaction](https://stellar.expert/explorer/testnet/tx/356b0225a7aaf3b7a5f965e8dbf8b39a8bccd5b2f869343ae4235198d8632ae2)
+- Transaction 2: [View Transaction](https://stellar.expert/explorer/testnet/tx/b4d6a2835c1bf8ceb931217bc995d07f1799814e783fb5faa4093efb6c1b88f9)
 
 ## Links
 
